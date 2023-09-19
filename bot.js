@@ -1,7 +1,9 @@
 import fetch from "node-fetch";
-import "dotenv/config";
+import * as dotenv from "dotenv";
 import { createRestAPIClient } from "masto";
 import schedule from "node-schedule";
+
+dotenv.config();
 
 const masto = createRestAPIClient({
   url: process.env.url,
@@ -36,10 +38,9 @@ async function updateProfile() {
   const encodedStringGodName = encodeURIComponent(data.godname);
   const encodedStringClanName = encodeURIComponent(data.clan);
 
-  const location =
-    data.town_name.length > 0
-      ? data.town_name
-      : `${data.distance} шагов от столицы`;
+  const location = !!data.town_name.length
+    ? data.town_name
+    : `${data.distance} шагов от столицы`;
 
   await masto.v1.accounts.updateCredentials({
     displayName: data.name,
@@ -53,12 +54,12 @@ async function updateProfile() {
         value: `https://godville.net/gods/${encodedStringGodName}`,
       },
       1: {
-        name: "Мой уровень",
-        value: data.level,
-      },
-      2: {
         name: `Состою в клане ${data.clan}`,
         value: `https://godville.net/stats/guild/${encodedStringClanName}`,
+      },
+      2: {
+        name: "Мой уровень",
+        value: data.level,
       },
       3: {
         name: "Здоровье",
