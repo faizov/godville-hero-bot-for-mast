@@ -1,0 +1,19 @@
+{
+  "name": "godville-hero-bot-for-mast",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "masto": "^6.2.0",
+    "node-fetch": "^3.3.2",
+    "node-schedule": "^2.1.1"
+  }
+}
