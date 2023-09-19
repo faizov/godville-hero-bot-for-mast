@@ -2,6 +2,9 @@ import fetch from "node-fetch";
 import * as dotenv from "dotenv";
 import { createRestAPIClient } from "masto";
 import schedule from "node-schedule";
+import fs from "fs/promises";
+
+import { generateImage } from "./generate-image.js";
 
 dotenv.config();
 
@@ -38,6 +41,8 @@ async function updateProfile() {
   const encodedStringGodName = encodeURIComponent(data.godname);
   const encodedStringClanName = encodeURIComponent(data.clan);
 
+  await generateImage(data.gold_approx, `${data.health}/${data.max_health}`);
+
   const location = !!data.town_name.length
     ? data.town_name
     : `${data.distance} шагов от столицы`;
@@ -45,9 +50,10 @@ async function updateProfile() {
   await masto.v1.accounts.updateCredentials({
     displayName: data.name,
     note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля\n\n
-    Мое местоположение: ${location}\n\n
-    Золота в кармане: ${data.gold_approx}\n\n
-    Выполняю квест: ${data.quest}\n\n`,
+    Мое местоположение: ${location}
+    Золота в кармане: ${data.gold_approx}
+    Выполняю квест: ${data.quest}`,
+    header: new Blob([await fs.readFile("./src/generated_image.png")]),
     fields_attributes: {
       0: {
         name: "Игровой персонаж Godville",
