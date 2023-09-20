@@ -41,15 +41,20 @@ async function updateProfile() {
   const encodedStringGodName = encodeURIComponent(data.godname);
   const encodedStringClanName = encodeURIComponent(data.clan);
 
-  await generateImage(data.gold_approx, `${data.health}/${data.max_health}`);
-
   const location = !!data.town_name.length
     ? data.town_name
     : `${data.distance} шагов от столицы`;
 
+  await generateImage(
+    data.gold_approx,
+    `${data.health} / ${data.max_health}`,
+    location,
+    data.quest
+  );
+
   await masto.v1.accounts.updateCredentials({
     displayName: data.name,
-    note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля\n\n
+    note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля.
     Мое местоположение: ${location}
     Золота в кармане: ${data.gold_approx}
     Выполняю квест: ${data.quest}`,
@@ -75,7 +80,7 @@ async function updateProfile() {
   });
 }
 
-schedule.scheduleJob("0 */2 * * *", function () {
+schedule.scheduleJob("* */2 * * *", function () {
   newPostDiary();
 });
 
