@@ -80,7 +80,7 @@ async function updateProfile() {
   });
 }
 
-schedule.scheduleJob("* */2 * * *", function () {
+schedule.scheduleJob("0 */2 * * *", function () {
   newPostDiary();
 });
 
