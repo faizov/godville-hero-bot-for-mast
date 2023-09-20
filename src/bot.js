@@ -30,26 +30,9 @@ async function fetchData() {
 async function newPostDiary() {
   const data = await fetchData();
 
-  const location = !!data.town_name.length
-    ? data.town_name
-    : `${data.distance} шагов от столицы`;
-
-  await generateImage(
-    data.gold_approx,
-    `${data.health} / ${data.max_health}`,
-    location,
-    data.quest
-  );
-
-  const attachment1 = await masto.v2.media.create({
-    file: new Blob([await fs.readFile("./src/generated_image.png")]),
-    description: `Game info: ${data.name}`,
-  });
-
   await masto.v1.statuses.create({
     status: data.diary_last,
     visibility: "public",
-    mediaIds: [attachment1.id],
   });
 }
 
@@ -71,7 +54,7 @@ async function updateProfile() {
 
   await masto.v1.accounts.updateCredentials({
     displayName: data.name,
-    note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля\n\n
+    note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля.
     Мое местоположение: ${location}
     Золота в кармане: ${data.gold_approx}
     Выполняю квест: ${data.quest}`,
