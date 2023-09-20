@@ -30,9 +30,26 @@ async function fetchData() {
 async function newPostDiary() {
   const data = await fetchData();
 
+  const location = !!data.town_name.length
+    ? data.town_name
+    : `${data.distance} шагов от столицы`;
+
+  await generateImage(
+    data.gold_approx,
+    `${data.health} / ${data.max_health}`,
+    location,
+    data.quest
+  );
+
+  const attachment1 = await masto.v2.media.create({
+    file: new Blob([await fs.readFile("./src/generated_image.png")]),
+    description: `Game info: ${data.name}`,
+  });
+
   await masto.v1.statuses.create({
     status: data.diary_last,
     visibility: "public",
+    mediaIds: [attachment1.id],
   });
 }
 
@@ -41,11 +58,16 @@ async function updateProfile() {
   const encodedStringGodName = encodeURIComponent(data.godname);
   const encodedStringClanName = encodeURIComponent(data.clan);
 
-  await generateImage(data.gold_approx, `${data.health}/${data.max_health}`);
-
   const location = !!data.town_name.length
     ? data.town_name
     : `${data.distance} шагов от столицы`;
+
+  await generateImage(
+    data.gold_approx,
+    `${data.health} / ${data.max_health}`,
+    location,
+    data.quest
+  );
 
   await masto.v1.accounts.updateCredentials({
     displayName: data.name,
@@ -75,7 +97,7 @@ async function updateProfile() {
   });
 }
 
-schedule.scheduleJob("0 */2 * * *", function () {
+schedule.scheduleJob("* */2 * * *", function () {
   newPostDiary();
 });
 
