@@ -30,10 +30,14 @@ async function fetchData() {
 async function newPostDiary() {
   const data = await fetchData();
 
-  await masto.v1.statuses.create({
-    status: data.diary_last,
-    visibility: "public",
-  });
+  try {
+    await masto.v1.statuses.create({
+      status: data.diary_last,
+      visibility: "public",
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
 }
 
 async function updateProfile() {
@@ -52,32 +56,36 @@ async function updateProfile() {
     data.quest
   );
 
-  await masto.v1.accounts.updateCredentials({
-    displayName: data.name,
-    note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля.
-    Мое местоположение: ${location}
-    Золота в кармане: ${data.gold_approx}
-    Выполняю квест: ${data.quest}`,
-    header: new Blob([await fs.readFile("./src/generated_image.png")]),
-    fields_attributes: {
-      0: {
-        name: "Игровой персонаж Godville",
-        value: `https://godville.net/gods/${encodedStringGodName}`,
+  try {
+    await masto.v1.accounts.updateCredentials({
+      displayName: data.name,
+      note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля.
+      Мое местоположение: ${location}
+      Золота в кармане: ${data.gold_approx}
+      Выполняю квест: ${data.quest}`,
+      header: new Blob([await fs.readFile("./src/generated_image.png")]),
+      fields_attributes: {
+        0: {
+          name: "Игровой персонаж Godville",
+          value: `https://godville.net/gods/${encodedStringGodName}`,
+        },
+        1: {
+          name: `Состою в клане ${data.clan}`,
+          value: `https://godville.net/stats/guild/${encodedStringClanName}`,
+        },
+        2: {
+          name: "Мой уровень",
+          value: data.level,
+        },
+        3: {
+          name: "Здоровье",
+          value: `${data.health}/${data.max_health}`,
+        },
       },
-      1: {
-        name: `Состою в клане ${data.clan}`,
-        value: `https://godville.net/stats/guild/${encodedStringClanName}`,
-      },
-      2: {
-        name: "Мой уровень",
-        value: data.level,
-      },
-      3: {
-        name: "Здоровье",
-        value: `${data.health}/${data.max_health}`,
-      },
-    },
-  });
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
 }
 
 schedule.scheduleJob("0 */2 * * *", function () {
