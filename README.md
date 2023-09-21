@@ -2,5 +2,6 @@
 
 Можно переделать для публикации в другие соц. сети.
 
-![image](https://github.com/faizov/godville-hero-bot-for-mast/assets/43875549/5f708761-03b9-427d-88b3-56373aa06914)
+![image](https://github.com/faizov/godville-hero-bot-for-mast/assets/43875549/9a31e195-50d2-4235-839e-b1dfc766623b)
+
 
