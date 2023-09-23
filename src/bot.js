@@ -28,9 +28,9 @@ async function fetchData() {
 }
 
 async function newPostDiary() {
-  const data = await fetchData();
-
   try {
+    const data = await fetchData();
+
     await masto.v1.statuses.create({
       status: data.diary_last,
       visibility: "public",
@@ -41,27 +41,28 @@ async function newPostDiary() {
 }
 
 async function updateProfile() {
-  const data = await fetchData();
-  const encodedStringGodName = encodeURIComponent(data.godname);
-  const encodedStringClanName = encodeURIComponent(data.clan);
-
-  const location = !!data.town_name.length
-    ? data.town_name
-    : `${data.distance} шагов от столицы`;
-
-  await generateImage(
-    data.gold_approx,
-    `${data.health} / ${data.max_health}`,
-    location,
-    data.quest
-  );
-
   try {
+    const data = await fetchData();
+    const encodedStringGodName = encodeURIComponent(data.godname);
+    const encodedStringClanName = encodeURIComponent(data.clan);
+
+    const location = !!data.town_name.length
+      ? data.town_name
+      : `${data.distance} шагов от столицы`;
+
+    await generateImage(
+      data.gold_approx,
+      `${data.health} / ${data.max_health}`,
+      location,
+      data.quest
+    );
+
     await masto.v1.accounts.updateCredentials({
       displayName: data.name,
       note: `Добро пожаловать на мою страницу, где я публикую фрагменты из личного дневника и делюсь своей актуальной информацией из мира Годвилля.
       Мое местоположение: ${location}
       Золота в кармане: ${data.gold_approx}
+      Характер: ${data.alignment}
       Выполняю квест: ${data.quest}`,
       header: new Blob([await fs.readFile("./src/generated_image.png")]),
       fields_attributes: {
