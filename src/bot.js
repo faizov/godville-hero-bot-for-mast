@@ -28,13 +28,19 @@ async function fetchData() {
 }
 
 async function newPostDiary() {
+  let lastPostedDiary = "";
+
   try {
     const data = await fetchData();
+    const newDiary = data.diary_last;
 
-    await masto.v1.statuses.create({
-      status: data.diary_last,
-      visibility: "public",
-    });
+    if (newDiary !== lastPostedDiary) {
+      await masto.v1.statuses.create({
+        status: newDiary,
+        visibility: "public",
+      });
+      lastPostedDiary = newDiary;
+    }
   } catch (error) {
     console.log("error", error);
   }
