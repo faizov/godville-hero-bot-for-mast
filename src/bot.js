@@ -27,9 +27,9 @@ async function fetchData() {
   }
 }
 
-async function newPostDiary() {
-  let lastPostedDiary = "";
+let lastPostedDiary = "";
 
+async function newPostDiary() {
   try {
     const data = await fetchData();
     const newDiary = data.diary_last;
